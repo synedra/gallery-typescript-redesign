@@ -13,9 +13,10 @@ interface Props extends WithSelected {
 export const Filter = ({ categories, selected, setSelected }: Props) => {
   const [currCategory, setCurrCategory] = useState<string>(Object.keys(categories)[0]);
 
+ 
   return <search>
     <h2 className={s.h2}>Filter results</h2>
-    <Selector categories={categories} selected={selected} currCategory={currCategory} setCurrCategory={setCurrCategory}/>
+    <Selector categories={categories} selected={selected} setSelected = {setSelected} currCategory={currCategory} setCurrCategory={setCurrCategory}/>
     {!currCategory
       ? <em className={s.em}>Select a filter...</em>
       : <>

@@ -4,8 +4,13 @@ import s from './Gallery.module.scss';
 import { WithSelected } from '~/App.tsx';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCards } from '~/lib/api/apps.ts';
+import { OrderedSet } from 'immutable';
 
-export const Gallery = (props: WithSelected) => {
+interface Props extends WithSelected {
+  selected: OrderedSet<string>
+}
+
+export const Gallery = ({ ...props }: Props)=> {
   const sorted = props.selected.sort();
 
   const query = useQuery({
@@ -13,7 +18,7 @@ export const Gallery = (props: WithSelected) => {
     queryFn: () => fetchCards(sorted),
     gcTime: 0,
   });
-
+  
   if (!query.data) {
     return <em>Loading...</em>;
   }

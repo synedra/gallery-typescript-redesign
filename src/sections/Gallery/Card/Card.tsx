@@ -1,31 +1,24 @@
 import s from './Card.module.scss';
 import { Header } from '~/sections/Gallery/Card/Header.tsx';
-import { CSSProperties } from 'react';
 import { WithSelected } from '~/App.tsx';
 import { CardInfo } from '~/lib/api/apps.ts';
 
-export const Card = ({ title, url, tags, selected, setSelected, difficulty, time, yt, gh }: CardInfo & WithSelected) =>
-  <article className={s.cardImg} style={{ '--bg-url': `url("${url}")` } as CSSProperties}>
+export const Card = ({ title, description, tags, icon, codeRoot, selected, setSelected }: CardInfo & WithSelected) => {
+
+const handleGithubClick = (codeRoot:string) => {
+  const rawPrefix = "https://raw.githubusercontent.com/";
+  const repoPrefix = "https://github.com/";
+  const modifiedUrl:string = codeRoot.replace(rawPrefix, repoPrefix).replace('/main', '');
+  window.open(modifiedUrl, '_blank', 'noopener,noreferrer');
+};
+
+return <article className={s.cardImg} >
     <div className={s.overlay}>
-      <Header title={title} tags={tags} setSelected={setSelected} selected={selected}/>
+      <Header title={title} icon={icon} tags={tags} description={description} setSelected={setSelected} selected={selected}/>
     </div>
     <div className={s.buttons}>
-      <button className={s.learnMore}>Learn More</button>
-      <button className={s.tryItNow}>Try It Now</button>
+      <button className={s.tryItNow} onClick={() => handleGithubClick(codeRoot)}>Try It Now</button>
     </div>
-    <div className={s.stats}>
-      <div>
-        <div className={s.statDifficulty}>{difficulty}</div>
-        <div className={s.statTime}>{time}</div>
-      </div>
-      <div>
-        {yt && <div className={s.statViews}>{yt.views}</div>}
-        {gh && <div className={s.statStars}>{gh.stars}</div>}
-      </div>
-      <div>
-        {yt && <div className={s.statLikes}>{yt.likes}</div>}
-        {gh && <div className={s.statForks}>{gh.forks}</div>}
-      </div>
-    </div>
-    <button className={s.similar}/>
+    
   </article>
+}

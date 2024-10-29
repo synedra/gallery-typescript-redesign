@@ -1,10 +1,11 @@
-import { AstraDB, Collection } from "@datastax/astra-db-ts";
+import { DataAPIClient, Collection } from "@datastax/astra-db-ts";
 import { Handler } from "@netlify/functions";
 
 const ASTRA_DB_API_ENDPOINT = process.env["ASTRA_DB_API_ENDPOINT"];
 const ASTRA_DB_APPLICATION_TOKEN = process.env["ASTRA_DB_APPLICATION_TOKEN"];
 
-const db = new AstraDB(ASTRA_DB_APPLICATION_TOKEN, ASTRA_DB_API_ENDPOINT);
+const client = new DataAPIClient(ASTRA_DB_APPLICATION_TOKEN);
+const db = client.db(ASTRA_DB_API_ENDPOINT);
 
 const handler: Handler = async (event, context) => {
   let filter = {};
@@ -12,27 +13,35 @@ const handler: Handler = async (event, context) => {
   if (event.queryStringParameters && event.queryStringParameters.tag) {
     let alltags = event.queryStringParameters.tag.split(",");
     if (alltags.length > 1) {
-      filter = { tags: { $all: alltags } };
+      filter = { title: { $in: alltags } };
+    } else if (alltags.length == 1) {
+      filter = { title: alltags[0] };
+    } else {
+      filter = { };
     }
-    let array = [event.queryStringParameters.tag];
-    filter = { tags: { $in: alltags } };
-  } else {
-    filter = {};
+    
   }
-  //console.log("FILTER:" + JSON.stringify(filter));
 
+  console.log("Filter: ")
+  console.log(filter)
+
+  let documents = [];
+      
   try {
-    let documents = [];
-    let collection = await db.collection("application_gallery");
+    let collection = db.collection("tag_application");
     await collection.find(filter).forEach((doc) => {
-      documents.push(doc);
-    });
-
+      for (let app in doc.apps) {
+        documents.push(doc.apps[app])
+      }
+    })
+    
     return {
       statusCode: 200,
       body: JSON.stringify(documents),
     };
   } catch (e) {
+    console.log(e)
+      
     return {
       statusCode: 400,
       body: JSON.stringify(e),

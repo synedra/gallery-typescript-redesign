@@ -10,8 +10,9 @@ interface Props extends WithSelected {
 }
 
 export const Tag = ({ selected, setSelected, name, mainColor, invertedColor }: Props) => {
+  name = name.toLowerCase()
   const onClick = () => setSelected((selected) => selected.has(name) ? selected.delete(name) : selected.add(name));
-
+  
   const isSelected = selected.has(name);
 
   return <li style={{ '--main': mainColor, '--inverted': invertedColor } as CSSProperties}>
