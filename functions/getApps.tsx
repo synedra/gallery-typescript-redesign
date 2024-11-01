@@ -12,29 +12,21 @@ const handler: Handler = async (event, context) => {
 
   if (event.queryStringParameters && event.queryStringParameters.tag) {
     let alltags = event.queryStringParameters.tag.split(",");
-    if (alltags.length > 1) {
-      filter = { title: { $in: alltags } };
-    } else if (alltags.length == 1) {
-      filter = { title: alltags[0] };
+    if (alltags.length != 0 ) {
+      filter = { tags: { $all: alltags } };
     } else {
       filter = { };
     }
-    
   }
-
-  console.log("Filter: ")
-  console.log(filter)
 
   let documents = [];
       
   try {
-    let collection = db.collection("tag_application");
+    let collection = db.collection("app_collection4");
     await collection.find(filter).forEach((doc) => {
-      for (let app in doc.apps) {
-        documents.push(doc.apps[app])
-      }
-    })
-    
+      documents.push(doc)
+      })
+    console.log(documents)
     return {
       statusCode: 200,
       body: JSON.stringify(documents),

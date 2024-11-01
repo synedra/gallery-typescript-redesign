@@ -12,16 +12,25 @@ const handler: Handler = async (event, context) => {
 
   try {
     let sections = [];
-    let collection = await db.collection("tag_application");
-    await collection.find({}, options).forEach((doc) => {
-      sections.push(doc);
-    });
 
-    console.log(sections)
+    let collection = await db.collection("app_collection4");
+    
+    await collection.find({}, options).forEach((doc) => {
+      for (let onetag in doc["tags"]) {
+        let tagname = doc["tags"][onetag]
+        if (! sections.includes(tagname)) {
+            sections.push(tagname)
+        }
+      }
+    })
+
+    sections.sort()
+
+    let response = [{'_id':'all', 'tags' :sections}]
 
     return {
       statusCode: 200,
-      body: JSON.stringify(sections),
+      body: JSON.stringify(response),
     };
   } catch (e) {
     return {

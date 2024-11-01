@@ -9,7 +9,6 @@ import { OrderedSet } from 'immutable';
 import { fetchCategories } from '~/lib/api/tags.ts';
 
 export type WithSelected = UseStateProps<OrderedSet<string>, 'selected'>;
-
 export const App = () => <>
   <Header/>
   <main className={s.main}>
@@ -29,7 +28,7 @@ const Body = () => {
   if (!query.data) {
     return <BodyLoading/>;
   }
-
+  
   return <>
     <Filter categories={query.data} selected={selected} setSelected={setSelected}/>
     <div className={s.spacer}/>
